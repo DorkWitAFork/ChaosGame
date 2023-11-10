@@ -9,7 +9,40 @@
 using namespace sf;
 using namespace std;
 
+void SierpinskiTriangleConstruction(int sides, vector<Vector2f> vertexVec, vector<Vector2f>& pointVec)
+{
+    for (int i = 0; i < 1000; i++)
+    {
 
+        int random = rand() % sides; // random number between 0 and the value of our const SIDES to get our random vertex
+        Vector2f midpoint = Vector2f((vertexVec.at(random).x + pointVec.at(pointVec.size() - 1).x) / 2,
+            (vertexVec.at(random).y + pointVec.at(pointVec.size() - 1).y) / 2);
+        pointVec.push_back(midpoint);
+    }
+}
+
+void GreaterVertexConstruction(int sides, vector<Vector2f> vertexVec, vector<Vector2f>& pointVec)
+{
+    int previous = -1;
+    for (int i = 0; i < 1000; i++)
+    {
+
+        int random = rand() % sides; // random number between 0 and the value of our const SIDES to get our random vertex
+        if (random != previous)
+        {
+            Vector2f midpoint = Vector2f((vertexVec.at(random).x + pointVec.at(pointVec.size() - 1).x) / 2,
+                (vertexVec.at(random).y + pointVec.at(pointVec.size() - 1).y) / 2);
+            pointVec.push_back(midpoint);
+
+            previous = random;
+        }
+        else
+        {
+            i--;
+        }
+
+    }
+}
 
 int main()
 {
@@ -82,47 +115,16 @@ int main()
 		****************************************
 		*/
 
-        if(points.size() > 0)
+        if (points.size() > 0)
         {
-            ///generate more point(s)
-            ///select random vertex
-            
             if (SIDES == 3)
             {
-                for (int i = 0; i < 1000; i++)
-                {
-
-                    int random = rand() % SIDES; // random number between 0 and the value of our const SIDES to get our random vertex
-                    Vector2f midpoint = Vector2f((vertices.at(random).x + points.at(points.size() - 1).x) / 2, 
-                        (vertices.at(random).y + points.at(points.size() - 1).y) / 2);
-                    points.push_back(midpoint);
-                }
+                SierpinskiTriangleConstruction(SIDES, vertices, points);
             }
             else
             {
-                int previous = -1;
-                for (int i = 0; i < 1000; i++)
-                {
-
-                    int random = rand() % SIDES; // random number between 0 and the value of our const SIDES to get our random vertex
-                    if (random != previous)
-                    {
-                        Vector2f midpoint = Vector2f((vertices.at(random).x + points.at(points.size() - 1).x) / 2,
-                            (vertices.at(random).y + points.at(points.size() - 1).y) / 2);
-                        points.push_back(midpoint);
-
-                        previous = random;
-                    }
-                    else
-                    {
-                        i--;
-                    }
-
-                }
+                GreaterVertexConstruction(SIDES, vertices, points);
             }
-            
-            ///calculate midpoint between random vertex and the last point in the vector
-            ///push back the newly generated coord.
         }
         /*
 		****************************************
