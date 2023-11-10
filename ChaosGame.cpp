@@ -84,25 +84,41 @@ int main()
         {
             ///generate more point(s)
             ///select random vertex
-            int previous = -1;
-            for (int i = 0; i < 1000; i++)
+            
+            if (SIDES == 3)
             {
-               
-            	int random = rand() % SIDES; // random number between 0 and the value of our const SIDES to get our random vertex
-                if (random != previous)
+                for (int i = 0; i < 1000; i++)
                 {
-                    Vector2f midpoint = Vector2f((vertices.at(random).x + points.at(points.size() - 1).x) / 2,
-												(vertices.at(random).y + points.at(points.size() - 1).y) / 2);
+
+                    int random = rand() % SIDES; // random number between 0 and the value of our const SIDES to get our random vertex
+                    Vector2f midpoint = Vector2f((vertices.at(random).x + points.at(points.size() - 1).x) / 2, 
+                        (vertices.at(random).y + points.at(points.size() - 1).y) / 2);
                     points.push_back(midpoint);
-
-                    previous = random;
                 }
-                else
-                {
-                    i--;
-                }
-
             }
+            else
+            {
+                int previous = -1;
+                for (int i = 0; i < 1000; i++)
+                {
+
+                    int random = rand() % SIDES; // random number between 0 and the value of our const SIDES to get our random vertex
+                    if (random != previous)
+                    {
+                        Vector2f midpoint = Vector2f((vertices.at(random).x + points.at(points.size() - 1).x) / 2,
+                            (vertices.at(random).y + points.at(points.size() - 1).y) / 2);
+                        points.push_back(midpoint);
+
+                        previous = random;
+                    }
+                    else
+                    {
+                        i--;
+                    }
+
+                }
+            }
+            
             ///calculate midpoint between random vertex and the last point in the vector
             ///push back the newly generated coord.
         }
@@ -116,7 +132,7 @@ int main()
         window.clear();
         for (int i = 0; i < points.size(); i++)
         {
-            RectangleShape fractal_point(Vector2f(3, 3));
+            RectangleShape fractal_point(Vector2f(1, 1));
             fractal_point.setPosition(points.at(i));
             window.draw(fractal_point);
         }
