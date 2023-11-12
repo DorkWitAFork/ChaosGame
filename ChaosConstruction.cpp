@@ -15,8 +15,9 @@ void SierpinskiTriangleConstruction(int sides, vector<Vector2f> vertexVec, vecto
     {
 
         int random = rand() % sides; // random number between 0 and the value of our const SIDES to get our random vertex
-        Vector2f midpoint = Vector2f((vertexVec.at(random).x + pointVec.at(pointVec.size() - 1).x) / 2,
-            (vertexVec.at(random).y + pointVec.at(pointVec.size() - 1).y) / 2);
+        int midpoint_X = (vertexVec.at(random).x + pointVec.at(pointVec.size() - 1).x) / 2;
+        int midpoint_Y = (vertexVec.at(random).y + pointVec.at(pointVec.size() - 1).y) / 2;
+        Vector2f midpoint = Vector2f(midpoint_X, midpoint_Y);
         pointVec.push_back(midpoint);
     }
 }
@@ -30,8 +31,9 @@ void GreaterVertexConstruction(int sides, vector<Vector2f> vertexVec, vector<Vec
         int random = rand() % sides; // random number between 0 and the value of our const SIDES to get our random vertex
         if (random != previous)
         {
-            Vector2f midpoint = Vector2f((vertexVec.at(random).x + pointVec.at(pointVec.size() - 1).x) / 2,
-                (vertexVec.at(random).y + pointVec.at(pointVec.size() - 1).y) / 2);
+            int midpoint_X = (vertexVec.at(random).x + pointVec.at(pointVec.size() - 1).x) / 2;
+            int midpoint_Y = (vertexVec.at(random).y + pointVec.at(pointVec.size() - 1).y) / 2;
+            Vector2f midpoint = Vector2f(midpoint_X, midpoint_Y);
             pointVec.push_back(midpoint);
 
             previous = random;
