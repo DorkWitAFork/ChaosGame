@@ -5,6 +5,7 @@
 #include <sstream>
 #include <vector>
 #include "ChaosConstruction.h"
+#include "TextHandler.h"
 
 // Make code easier to type with "using namespace"
 using namespace sf;
@@ -14,19 +15,43 @@ int main()
 {
 	// Create a video mode object
 	VideoMode vm(1920, 1080);
+
 	// Create and open a window for the game
-	RenderWindow window(vm, "Chaos Game", Style::Default);
+	RenderWindow window(vm, "Chaos Game", Style::Fullscreen);
 
 	vector<Vector2f> vertices;
 	vector<Vector2f> points;
+	string playerInput;
 
+	Font font;
+	font.loadFromFile("Pixellettersfull-BnJ5.ttf");
 
-	int n;
-	cout << "Hey, enter how many sides you would like your shape to have: ";
-	cin >> n;
+	Text titleText("CHAOS GAME >:)", font, 32);
+	Text askForInputText("Please enter the amount of vertices for your shape: ", font, 32);
+	Text resetText("Press Q to reset", font, 32);
+	Text vertexNumText("", font, 32);
+	Text clickInputText("", font, 32);
 
-	const int SIDES = n;
+	/*
+		setAttributes is a TextHandler function that sets Position, includes an optional Style parameter, and defaults Color
+		to white in the following formats:
+			setAttributes(Text object, leftmost position, topmost position, Style parameter);
+			setAttributes(Text object, leftmost position, topmost position);
+	*/
 
+	setAttributes(titleText, 20, 8, Text::Bold);
+	FloatRect referenceRect1 = titleText.getGlobalBounds();
+
+	setAttributes(askForInputText, 20, referenceRect1.top + referenceRect1.height + 10);
+	FloatRect referenceRect2 = askForInputText.getGlobalBounds();
+
+	FloatRect resetTextBounds = resetText.getLocalBounds();
+	setAttributes(resetText, 1920 - resetTextBounds.width - 20, 1080 - resetTextBounds.height - 36);
+
+	setAttributes(vertexNumText, referenceRect2.width + 30, referenceRect1.top + referenceRect1.height + 10);
+	setAttributes(clickInputText, 20, referenceRect2.top + referenceRect2.height + 10);
+
+	int n = 0;
 
 	while (window.isOpen())
 	{
@@ -44,31 +69,72 @@ int main()
 				// Quit the game when the window is closed
 				window.close();
 			}
-			if (event.type == Event::MouseButtonPressed)
+
+			if (event.type == sf::Event::TextEntered && n == 0)
+			{
+				if (isdigit(event.text.unicode))
+				{
+					playerInput += event.text.unicode;
+					vertexNumText.setString(playerInput);
+				}
+			}
+
+			if (Keyboard::isKeyPressed(Keyboard::Enter))
+			{
+				if (playerInput != "")
+				{
+					n = stoi(playerInput);
+
+					ostringstream out;
+					out << "Please click " << n << " points to create your vertices:";
+
+					clickInputText.setString(out.str());
+				}
+			}
+
+			if (Keyboard::isKeyPressed(Keyboard::Backspace) && n == 0)
+			{
+				if (playerInput.length() > 0)
+				{
+					playerInput.pop_back();
+					vertexNumText.setString(playerInput);
+				}
+			}
+
+			if (Keyboard::isKeyPressed(Keyboard::Q) && points.size() > (10000 * n))
+			{
+				n = 0;
+				playerInput = "";
+
+				vertexNumText.setString("");
+				clickInputText.setString("");
+
+				vertices.clear();
+				points.clear();
+			}
+
+			if (event.type == Event::MouseButtonPressed && n > 2)
 			{
 				if (event.mouseButton.button == Mouse::Left)
 				{
-					std::cout << "the left button was pressed" << std::endl;
-					std::cout << "mouse x: " << event.mouseButton.x << std::endl;
-					std::cout << "mouse y: " << event.mouseButton.y << std::endl;
-
-					if (vertices.size() < SIDES)
+					if (vertices.size() < n)
 					{
 						vertices.push_back(Vector2f(event.mouseButton.x, event.mouseButton.y));
 					}
 					else if (points.size() == 0)
 					{
-						///fourth click
-						///push back to points vector
+						// Last click from user input, pushes back into points vector
 						points.push_back(Vector2f(event.mouseButton.x, event.mouseButton.y));
 					}
 				}
 			}
 		}
+
 		if (Keyboard::isKeyPressed(Keyboard::Escape))
 		{
 			window.close();
 		}
+
 		/*
 		****************************************
 		Update
@@ -77,15 +143,16 @@ int main()
 
 		if (points.size() > 0)
 		{
-			if (SIDES == 3)
+			if (n == 3)
 			{
-				SierpinskiTriangleConstruction(SIDES, vertices, points);
+				SierpinskiTriangleConstruction(n, vertices, points); // Constructs a Sierpinski triangle
 			}
 			else
 			{
-				GreaterVertexConstruction(SIDES, vertices, points);
+				GreaterVertexConstruction(n, vertices, points); // Constructs fractals composed of 4 or more vertices
 			}
 		}
+
 		/*
 		****************************************
 		Draw
@@ -94,7 +161,17 @@ int main()
 
 
 		window.clear();
-		//function call to draw the vertices
+
+		window.draw(titleText);
+		window.draw(askForInputText);
+		window.draw(vertexNumText);
+		window.draw(clickInputText);
+		if (points.size() > (10000 * n))
+		{
+			window.draw(resetText);
+		}
+
+		// Function call to draw the vertices
 		drawVertices(vertices, window);
 		drawFracPoints(points, window);
 
