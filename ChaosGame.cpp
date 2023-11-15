@@ -17,7 +17,7 @@ int main()
 	VideoMode vm(1920, 1080);
 
 	// Create and open a window for the game
-	RenderWindow window(vm, "Chaos Game", Style::Fullscreen);
+	RenderWindow window(vm, "Chaos Game", Style::Default);
 
 	vector<Vector2f> vertices;
 	vector<Vector2f> points;
